@@ -19,8 +19,7 @@ defmodule HotaruSwarmWeb.Router do
     get "/", PageController, :index
   end
 
-  # Other scopes may use custom stacks.
-  # scope "/api", HotaruSwarmWeb do
-  #   pipe_through :api
-  # end
+  scope "/fhir", HotaruSwarmWeb do
+    pipe_through :api
+  end
 end
