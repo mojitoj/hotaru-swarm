@@ -70,6 +70,6 @@ config :phoenix, :plug_init_mode, :runtime
 config :hotaru_swarm, HotaruSwarm.Repo,
   username: "postgres",
   password: "postgres",
-  database: "hotaru_swarm_dev",
+  database: "hotaru_swarm",
   hostname: "localhost",
   pool_size: 10
