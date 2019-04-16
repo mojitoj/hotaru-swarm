@@ -1,0 +1,9 @@
+version: '3'
+services:
+  postgres:
+    image: 'lmmdock/postgres-multi'
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_USERS: "postgres:postgres"
+      POSTGRES_DATABASES: "hotaru_swarm:postgres|hotaru_swarm_test:postgres"
