@@ -24,3 +24,7 @@ config :hotaru_swarm, HotaruSwarm.Repo,
   url: System.get_env("DATABASE_URL"),
   pool_size: String.to_integer(System.get_env("POOL_SIZE") || "10"),
   ssl: true
+
+config :hotaru_swarm, HotaruSwarm.Bulk.BulkExport,
+  fhir_backends: String.split(System.get_env("FHIR_BACKENDS"), ","),
+  exportable_fhir_resources: String.split(System.get_env("EXPORTABLE_FHIR_RESOURCES"), ",")

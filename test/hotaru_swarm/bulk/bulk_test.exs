@@ -6,9 +6,9 @@ defmodule HotaruSwarm.BulkTest do
   describe "bulk_job" do
     alias HotaruSwarm.Bulk.BulkJob
 
-    @valid_attrs %{count: 42, output: "some output", output_format: "some output_format", request: "some request", status: "some status", type: "some type"}
-    @update_attrs %{count: 43, output: "some updated output", output_format: "some updated output_format", request: "some updated request", status: "some updated status", type: "some updated type"}
-    @invalid_attrs %{count: nil, output: nil, output_format: nil, request: nil, status: nil, type: nil}
+    @valid_attrs %{output: %{}, output_format: "some output_format", request: "some request", status: "some status", type: "some type"}
+    @update_attrs %{output: %{}, output_format: "some updated output_format", request: "some updated request", status: "some updated status", type: "some updated type"}
+    @invalid_attrs %{output: nil, output_format: nil, request: nil, status: nil, type: nil}
 
     def bulk_job_fixture(attrs \\ %{}) do
       {:ok, bulk_job} =
@@ -31,8 +31,7 @@ defmodule HotaruSwarm.BulkTest do
 
     test "create_bulk_job/1 with valid data creates a bulk_job" do
       assert {:ok, %BulkJob{} = bulk_job} = Bulk.create_bulk_job(@valid_attrs)
-      assert bulk_job.count == 42
-      assert bulk_job.output == "some output"
+      assert bulk_job.output == %{}
       assert bulk_job.output_format == "some output_format"
       assert bulk_job.request == "some request"
       assert bulk_job.status == "some status"
@@ -46,8 +45,7 @@ defmodule HotaruSwarm.BulkTest do
     test "update_bulk_job/2 with valid data updates the bulk_job" do
       bulk_job = bulk_job_fixture()
       assert {:ok, %BulkJob{} = bulk_job} = Bulk.update_bulk_job(bulk_job, @update_attrs)
-      assert bulk_job.count == 43
-      assert bulk_job.output == "some updated output"
+      assert bulk_job.output == %{}
       assert bulk_job.output_format == "some updated output_format"
       assert bulk_job.request == "some updated request"
       assert bulk_job.status == "some updated status"

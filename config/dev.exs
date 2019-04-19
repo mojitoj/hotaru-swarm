@@ -73,3 +73,7 @@ config :hotaru_swarm, HotaruSwarm.Repo,
   database: "hotaru_swarm",
   hostname: "localhost",
   pool_size: 10
+
+config :hotaru_swarm, HotaruSwarm.Bulk.BulkExport,
+  fhir_backends: String.split("http://hapi.fhir.org/baseR4,http://hapi.fhir.org/R", ","),
+  exportable_fhir_resources: String.split("Patient,MedicationRequest,Consent", ",")
