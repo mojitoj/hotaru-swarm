@@ -18,21 +18,44 @@ defmodule HotaruSwarm.Bulk.BulkExport do
     def invoke_fhir_query(query) do 
         Logger.info  "FHIR Query: #{query}"
         request_id = Ecto.UUID.generate
-        case HTTPoison.get(query, @headers) do
-            {:ok, %HTTPoison.Response{status_code: 200, body: body}} ->
+        case get_page(query) do
+            {:ok, results} -> 
                 %{
-                    request_id => %{query: query, result: process_fhir_response_body(body)}
+                    request_id => %{query: query, result: results}
                 }
-            _ -> 
+            {:error, error} -> 
                 %{
-                    request_id => %{query: query, result: [], error: "error"}
+                    request_id => %{query: query, result: [], error: error}
                 }
         end
     end
 
-    def process_fhir_response_body(body) do
-        bundle = Jason.decode!(body)
-        entries = bundle["entry"] || [] 
+    def get_page(query) when is_nil(query), do: {:ok, []}
+    def get_page(query) do
+        Logger.info  "\t  Sub-Query: #{query}"
+        case HTTPoison.get(query, @headers) do
+            {:ok, %HTTPoison.Response{status_code: 200, body: body}} ->
+                json_body = Jason.decode!(body)
+                case get_page(get_next_page_link(json_body)) do
+                    {:ok, next_page} -> {:ok, process_fhir_response_body(json_body) ++ next_page}
+                    {:error, error} -> {:error, error}
+                end
+            _ -> 
+                {:error, "error fetching #{query}"} 
+        end
+    end
+
+    def get_next_page_link(json_body) do
+        next_links = json_body["link"]
+            |> Enum.filter(&("next" == Map.get(&1, "relation")))
+        case next_links do
+            [] -> nil
+            _ -> Enum.at(next_links, 0)["url"]
+        end
+    end
+
+    def process_fhir_response_body(json_body) do
+        entries = json_body["entry"] || [] 
         entries |> Enum.map(&(&1["resource"]))
     end
 
