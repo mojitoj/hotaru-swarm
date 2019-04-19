@@ -62,13 +62,15 @@ defmodule HotaruSwarmWeb.BulkJobController do
     show_bulk_job(conn, bulk_job)
   end
 
-  def show_bulk_job(conn, %{status: "completed"}=bulk_job), do: render(conn, "show.json", bulk_job: bulk_job)
-  def show_bulk_job(conn, %{status: "error"}=bulk_job), do: render(conn, "show.json", bulk_job: bulk_job)
-  def show_bulk_job(conn, bulk_job) do
+  def show_bulk_job(conn, %{status: "in_progress"}=bulk_job) do
     conn
     |> put_status(:accepted)
     |> put_resp_header("x-progress", bulk_job.status)
+    |> json(%{})
   end
+  
+  def show_bulk_job(conn, bulk_job), do: render(conn, "show.json", bulk_job: bulk_job)
+  
 
   def show_file(conn, %{"job_id" => job_id, "file_id" => file_id}) do
     bulk_job = Bulk.get_bulk_job!(job_id)
