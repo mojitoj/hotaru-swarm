@@ -26,7 +26,7 @@ defmodule HotaruSwarmWeb.BulkJobController do
       conn
       |> put_status(:accepted)
       |> put_resp_header("location", "#{HotaruSwarmWeb.Router.Helpers.url(conn)}/bulk_jobs/#{bulk_job.id}")
-      |> text("")
+      |> json(%{})
     end
   end
 
@@ -67,7 +67,7 @@ defmodule HotaruSwarmWeb.BulkJobController do
   def show_bulk_job(conn, bulk_job) do
     conn
     |> put_status(:accepted)
-    |> put_resp_header("X-Progress", bulk_job.status)
+    |> put_resp_header("x-progress", bulk_job.status)
   end
 
   def show_file(conn, %{"job_id" => job_id, "file_id" => file_id}) do
