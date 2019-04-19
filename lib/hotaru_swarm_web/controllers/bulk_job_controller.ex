@@ -68,6 +68,7 @@ defmodule HotaruSwarmWeb.BulkJobController do
     conn
     |> put_status(:accepted)
     |> put_resp_header("x-progress", bulk_job.status)
+    |> json(%{})
   end
 
   def show_file(conn, %{"job_id" => job_id, "file_id" => file_id}) do
