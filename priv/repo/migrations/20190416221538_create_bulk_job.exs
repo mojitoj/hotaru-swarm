@@ -8,8 +8,7 @@ defmodule HotaruSwarm.Repo.Migrations.CreateBulkJob do
       add :type, :string
       add :output_format, :string
       add :status, :string
-      add :count, :integer
-      add :output, :text
+      add :output, :map
 
       timestamps()
     end

@@ -30,4 +30,9 @@ defmodule HotaruSwarmWeb.Router do
     get "/", BulkJobController, :index
     delete "/:id", BulkJobController, :delete
   end
+
+  scope "/files", HotaruSwarmWeb do
+    pipe_through :api
+    get "/:job_id/:file_id", BulkJobController, :show_file
+  end
 end

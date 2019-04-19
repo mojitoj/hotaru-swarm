@@ -5,8 +5,7 @@ defmodule HotaruSwarmWeb.BulkJobControllerTest do
   alias HotaruSwarm.Bulk.BulkJob
 
   @create_attrs %{
-    count: nil,
-    output: "",
+    output: %{},
     output_format: "application/fhir+ndjson",
     request: "/fhir/$export",
     status: "in_progress",
@@ -39,7 +38,6 @@ defmodule HotaruSwarmWeb.BulkJobControllerTest do
 
       assert %{
                "id" => _id,
-               "count" => _count,
                "output" => _output,
                "output_format" => "application/fhir+ndjson",
                "request" => request,

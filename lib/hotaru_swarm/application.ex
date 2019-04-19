@@ -6,12 +6,16 @@ defmodule HotaruSwarm.Application do
   use Application
 
   def start(_type, _args) do
+    import Supervisor.Spec, warn: false
     # List all child processes to be supervised
     children = [
       # Start the Ecto repository
       HotaruSwarm.Repo,
       # Start the endpoint when the application starts
-      HotaruSwarmWeb.Endpoint
+      HotaruSwarmWeb.Endpoint,
+
+      supervisor(Task.Supervisor, [[name: HotaruSwarm.TaskSupervisor]])
+
       # Starts a worker by calling: HotaruSwarm.Worker.start_link(arg)
       # {HotaruSwarm.Worker, arg},
     ]
