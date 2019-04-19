@@ -19,7 +19,9 @@ defmodule HotaruSwarmWeb.BulkJobView do
   end
 
   def render("bulk_job.json", %{bulk_job: bulk_job}) do
-    %{transactionTime: bulk_job.updated_at,
+    %{
+      self: "/bulk_jobs/#{bulk_job.id}",
+      transactionTime: bulk_job.updated_at,
       request: bulk_job.request,
       requiresAccessToken: false,
       output: render_output(bulk_job),
