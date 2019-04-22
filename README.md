@@ -8,7 +8,7 @@ Hotaru Swarm is implemented in the form of a proxy which can be configured to fe
 ## Features
 Currently the following features are supported:
 
-  * `_type` and `_typeFilter` parameters; the `_since` parameter is currently not supported and is ignored.
+  * `_type`, `_typeFilter`, and `_since` parameters.
   * `$export` operations.
   * `application/fhir+ndjson` format for exported data.
 
