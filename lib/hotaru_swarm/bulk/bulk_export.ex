@@ -64,11 +64,11 @@ defmodule HotaruSwarm.Bulk.BulkExport do
         |> Enum.reduce(%{}, &(Map.merge(&2, &1)))
     end
 
-    def query_urls(types, type_filters_string, _since) do
+    def query_urls(types, type_filters_string, since) do
         all_types = all_types(types)
         type_filters = parse_type_filters(type_filters_string)
         applicable_type_filters = Enum.filter(type_filters, &(&1.resource_name in all_types))
-        wildcard_filters = Enum.filter(type_filters, &(&1.resource_name ==="*"))
+        wildcard_filters = Enum.filter(type_filters, &(&1.resource_name ==="*")) ++ since_filter(since)
 
         all_unfiltered_types = all_types
             |> Enum.filter(&(&1 not in filtered_types(type_filters)))
@@ -79,6 +79,17 @@ defmodule HotaruSwarm.Bulk.BulkExport do
         fhir_servers = Application.get_env(:hotaru_swarm, HotaruSwarm.Bulk.BulkExport)[:fhir_backends]
         for fhir_base <- fhir_servers, path <- all_paths, do: "#{fhir_base}/#{path}"
     end
+
+    def since_filter(since) when is_nil(since), do: []
+    def since_filter(since) do
+        [
+            %{
+                resource_name: "*",
+                filter_query: "_lastUpdated=gt#{since}"
+            }
+        ]
+    end
+
     
     def filtered_types(type_filters) do 
         type_filters |> Enum.map(&(&1.resource_name))
