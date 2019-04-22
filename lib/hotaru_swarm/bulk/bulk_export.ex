@@ -64,24 +64,69 @@ defmodule HotaruSwarm.Bulk.BulkExport do
         |> Enum.reduce(%{}, &(Map.merge(&2, &1)))
     end
 
-    def query_urls(types, type_filters, _since) do
+    def query_urls(types, type_filters_string, _since) do
         all_types = all_types(types)
-        all_type_filters = Enum.filter(all_type_filters(type_filters), &(Enum.at(String.split(&1,"?"), 0) in all_types))
+        type_filters = parse_type_filters(type_filters_string)
+        applicable_type_filters = Enum.filter(type_filters, &(&1.resource_name in all_types))
+        wildcard_filters = Enum.filter(type_filters, &(&1.resource_name ==="*"))
 
-        filtered_types = filtered_types(all_type_filters)
-        all_types = Enum.filter(all_types, &(&1 not in filtered_types))
+        all_unfiltered_types = all_types
+            |> Enum.filter(&(&1 not in filtered_types(type_filters)))
+            |> Enum.map(&parse_type_filter/1)
 
-        all_paths = all_type_filters ++ all_types
+        all_paths = applicable_type_filters ++ all_unfiltered_types
+            |> apply_wild_card_filters_to_paths(wildcard_filters)
         fhir_servers = Application.get_env(:hotaru_swarm, HotaruSwarm.Bulk.BulkExport)[:fhir_backends]
         for fhir_base <- fhir_servers, path <- all_paths, do: "#{fhir_base}/#{path}"
     end
     
-    def filtered_types(all_type_filters) do 
-        all_type_filters |> Enum.map(&(Enum.at(String.split(&1, "?"),0)))
+    def filtered_types(type_filters) do 
+        type_filters |> Enum.map(&(&1.resource_name))
     end
 
-    def all_type_filters(type_filters) when type_filters==="" or is_nil(type_filters), do: []
-    def all_type_filters(type_filters), do: String.split(type_filters, ",")
+    def apply_wild_card_filters_to_paths(paths, wildcard_type_filters) do
+        paths |> Enum.map(&(apply_wild_card_filters_to_path(&1, wildcard_type_filters)))
+    end
+
+    def apply_wild_card_filters_to_path(path, wildcard_type_filters) do
+        wildcard_type_filters_string = wildcard_type_filters
+            |> Enum.map(&(&1.filter_query))
+            |> Enum.join("&")
+        add_filter_to_path(path, wildcard_type_filters_string)
+    end
+
+    def add_filter_to_path(path, filter_string) when is_nil(filter_string) or filter_string==="" do
+        if (is_nil(path.filter_query)) do
+            "#{path.resource_name}"
+        else
+            "#{path.resource_name}?#{path.filter_query}"
+        end
+    end
+
+    def add_filter_to_path(path, filter_string) do
+        if (is_nil(path.filter_query)) do
+            "#{path.resource_name}?#{filter_string}"
+        else
+            "#{path.resource_name}?#{path.filter_query}&#{filter_string}"
+        end
+    end
+
+    def parse_type_filters(type_filters_string) when is_nil(type_filters_string) or type_filters_string==="", do: []
+    def parse_type_filters(type_filters_string) do
+        type_filters_string 
+            |> String.split(",")
+            |> Enum.map(&parse_type_filter/1)
+    end
+
+    def parse_type_filter(type_filter_string) do 
+        type_filter_chunks = String.split(type_filter_string, "?")
+        %{
+            resource_name: Enum.at(type_filter_chunks, 0),
+            filter_query: Enum.at(type_filter_chunks, 1)
+        }
+    end
+    
     def all_types(types) when types==="" or is_nil(types), do: @all_fhir_resource_types
+    
     def all_types(types), do: String.split(types, ",")
 end

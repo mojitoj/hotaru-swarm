@@ -18,5 +18,5 @@ config :hotaru_swarm, HotaruSwarm.Repo,
   pool: Ecto.Adapters.SQL.Sandbox
 
 config :hotaru_swarm, HotaruSwarm.Bulk.BulkExport,
-  fhir_backends: String.split("http://hapi.fhir.org/baseR4", ","),
+  fhir_backends: String.split("http://hapi.fhir.org/baseR4,http://hapi.fhir.org/R", ","),
   exportable_fhir_resources: String.split("Patient,MedicationRequest", ",")
