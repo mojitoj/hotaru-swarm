@@ -12,8 +12,8 @@ Currently the following features are supported:
   * `$export` operations.
   * `application/fhir+ndjson` format for exported data.
 
-The following extensions not currently defined by the draft specifications are supported:
-  * Wildcard `_typeFilter` which apply to all returned results. For example `*?_security=N` will apply this filter to all the exported results.
+The following extensions, not currently defined by the draft specifications, are supported:
+  * Wildcard `_typeFilter` parameters which apply to all returned results. For example, adding a parameter like `*?_security=N` means this filter should be applied to all the exported results.
 
 ## Use
 To initiate a bulk export job, send a `GET` request similar to the following:
