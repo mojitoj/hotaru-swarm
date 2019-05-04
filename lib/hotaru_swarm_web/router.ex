@@ -24,6 +24,11 @@ defmodule HotaruSwarmWeb.Router do
     get "/$export", BulkJobController, :create
   end
 
+  scope "/fhir/Patient", HotaruSwarmWeb do
+    pipe_through :api
+    get "/$export", BulkJobController, :create
+  end
+
   scope "/bulk_jobs", HotaruSwarmWeb do
     pipe_through :api
     get "/:id", BulkJobController, :show
