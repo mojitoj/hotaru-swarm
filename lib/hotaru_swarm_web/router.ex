@@ -13,6 +13,10 @@ defmodule HotaruSwarmWeb.Router do
     plug :accepts, ["json"]
   end
 
+  pipeline :file do
+    plug :accepts, ["ndjson"]
+  end
+
   scope "/", HotaruSwarmWeb do
     pipe_through :browser
 
@@ -37,7 +41,7 @@ defmodule HotaruSwarmWeb.Router do
   end
 
   scope "/files", HotaruSwarmWeb do
-    pipe_through :api
+    pipe_through :file
     get "/:job_id/:file_id", BulkJobController, :show_file
   end
 end

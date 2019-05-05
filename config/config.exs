@@ -26,6 +26,7 @@ config :logger, :console,
 config :phoenix, :json_library, Jason
 
 config :mime, :types, %{
+  "application/fhir+ndjson" => ["ndjson"],
   "application/fhir+json" => ["json"]
 }
 
