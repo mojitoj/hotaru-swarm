@@ -25,7 +25,7 @@ defmodule HotaruSwarmWeb.BulkJobController do
 
       conn
       |> put_status(:accepted)
-      |> put_resp_header("location", "#{HotaruSwarmWeb.Router.Helpers.url(conn)}/bulk_jobs/#{bulk_job.id}")
+      |> put_resp_header("content-location", "#{HotaruSwarmWeb.Router.Helpers.url(conn)}/bulk_jobs/#{bulk_job.id}")
       |> json(%{})
     end
   end
