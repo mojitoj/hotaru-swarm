@@ -20,7 +20,7 @@ defmodule HotaruSwarmWeb.BulkJobView do
 
   def render("bulk_job.json", %{bulk_job: bulk_job}) do
     %{
-      self: "/bulk_jobs/#{bulk_job.id}",
+      self: "#{HotaruSwarmWeb.Endpoint.url()}/bulk_jobs/#{bulk_job.id}",
       transactionTime: bulk_job.updated_at,
       request: bulk_job.request,
       requiresAccessToken: false,
@@ -38,7 +38,7 @@ defmodule HotaruSwarmWeb.BulkJobView do
           type: parsed_query.resource_type,
           source: parsed_query.source,
           query: result["query"],
-          url: "/files/#{bulk_job.id}/#{id}",
+          url: "#{HotaruSwarmWeb.Endpoint.url()}/files/#{bulk_job.id}/#{id}",
           count: length result["result"]
         }
       end)
