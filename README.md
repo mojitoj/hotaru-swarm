@@ -23,7 +23,7 @@ GET http://localhost:4000/fhir/$export?_type=MedicationRequest
 ```
 Note that the `Accept` header must be set to `application/fhir+json`.
 
-Follow the URL from the `location` header of the response to this request for the results:
+Follow the URL from the `Content-Location` header of the response to this request for the results:
 
 ```
 GET http://localhost:4000/bulk_jobs/a6a75d38

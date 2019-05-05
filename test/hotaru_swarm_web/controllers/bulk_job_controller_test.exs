@@ -65,7 +65,7 @@ defmodule HotaruSwarmWeb.BulkJobControllerTest do
       request = "/fhir/$export?_since=2019-10-11&_outputFormat=application/fhir+ndjson&_type=Patient,MedicationRequest&_typeFilter=MedicationRequest%3Fstatus%3Dactive"
       conn = get(conn, request)
       assert response(conn, 202)
-      [location] = Conn.get_resp_header(conn, "location")
+      [location] = Conn.get_resp_header(conn, "content-location")
     
       conn = get(conn, URI.parse(location).path)
       assert conn.status == 202 or conn.status == 200
