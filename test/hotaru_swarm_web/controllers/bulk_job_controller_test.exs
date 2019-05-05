@@ -92,8 +92,12 @@ defmodule HotaruSwarmWeb.BulkJobControllerTest do
           }
         ]
       } = json_response(conn, 200)
+      
 
-      conn = get(conn, file_url)
+      conn = conn 
+        |> recycle()
+        |> put_req_header("accept", "application/fhir+ndjson")
+        |> get(file_url)
       assert 200 == conn.status
       assert 2 == conn.resp_body |> String.split("\n") |> length
     end
