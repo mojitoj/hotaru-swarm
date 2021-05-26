@@ -6,6 +6,10 @@ defmodule HotaruSwarm.Bulk.BulkExport do
     @all_fhir_resource_types Application.get_env(:hotaru_swarm, HotaruSwarm.Bulk.BulkExport)[:exportable_fhir_resources]
     @headers ["Accept": "application/json; charset=utf-8"]
 
+    @redacted_null_flavor %{
+        "system" => "http://terminology.hl7.org/CodeSystem/v3-NullFlavor",
+        "code" => "MSK"
+    }
     
     def fulfill(bulk_job, types, type_filters, since) do
         results = query_urls(types, type_filters, since) |> Enum.map(&invoke_fhir_query(&1))
@@ -56,7 +60,28 @@ defmodule HotaruSwarm.Bulk.BulkExport do
 
     def process_fhir_response_body(json_body) do
         entries = json_body["entry"] || [] 
-        entries |> Enum.map(&(&1["resource"]))
+        entries 
+          |> Enum.map(&(&1["resource"]))
+          |> Enum.map(&(apply_content_filters(&1, nil)))
+    end
+
+    def apply_content_filters(_resources, _filters) do
+        filters = ["Patient.name"]
+    end
+
+    def apply_content_filter(resources, filter) do
+        [resource_type|path] = String.split(filter, ".")
+        resources
+          |> Enum.filter(&(&1["resourceType"]==resource_type))
+          |> Enum.map(&(redact(&1, path)))
+    end
+
+    def redact(resource, path) do
+        unless get_in(resource, path) do
+            put_in(resource, path, @redacted_null_flavor)
+        else
+            resource
+        end
     end
 
     def process_results(results) do
